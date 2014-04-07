@@ -1,0 +1,95 @@
+#include <iostream>
+#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+#define CLR while (getchar()!='\n') //пропуск символов до конца строки
+#define Kmax 20 //максимальное число структур
+#define Lmax 81 //максимальная длина строки
+#define FCLR while (getc(fin)!='\n') //пропуск символов до конца строки в файле
+
+struct izd {char gorod[Lmax], name[Lmax], year[Lmax];};  //Структура издательств
+
+struct book_struct  //Структура книг
+ {
+   char name[Lmax], autor;
+   izd pr;
+   int price, num_book;
+ };
+
+void input (book_struct *book, int *k) //ввод массива книг
+ {
+    do   // Ввод количества книг
+    {
+      printf("enter number of Book ");
+      scanf("%d", k); //k - указатель на количество структур
+    }
+    while (*k<=0 || *k>Kmax);
+    CLR;
+    for (int i=0; i<*k; i++) //Цикл ввода книг
+    {
+         printf("Book # %d\n", i+1);
+         printf("Name: "); gets(book[i].name);
+         printf("Price: "); scanf("%d", &book[i].price);
+         printf("Number of str: "); scanf("%d", &book[i].num_book);
+         CLR; 
+         printf("autor: "); book[i].autor=getchar();
+         CLR; //пропуск символа '\n'
+         printf("City of izd: "); gets(book[i].pr.gorod);
+         printf("Name of izd: "); gets(book[i].pr.name);
+         printf("Relase year: "); gets(book[i].pr.year);
+         printf("\n");
+    }
+
+    printf("Input is over\n");
+    getchar();
+}
+
+void output (book_struct *book, int k) //Вывод массива книг
+ {
+     int i;
+     printf("list of Book sets: \n");
+     for(i=0; i<k; i++)
+     {
+         printf("Book # %d\n", i+1);
+         printf("Name: %s\n", book[i].name);
+         printf("Price: %d\n", book[i].price);
+         printf("Number of str: %d\n", book[i].num_book);
+         printf("autor %c\n", book[i].autor);
+         printf("City of izd: %s\n", book[i].pr.gorod);
+         printf("Name of izd: %s\n", book[i].pr.name);
+         printf("Relase year: %s\n", book[i].pr.year);
+         printf("Press any key to continue...\n");
+         getchar();//ожидание нажатия клавиши
+      }
+     printf("End of list\n");
+     printf("Press any key to continue...\n");
+ }
+
+void search (book_struct *book, char mautor[][Lmax], int k, int *kg)
+ {
+     int minpage, j;
+     scanf("%d",&minpage);
+     for(int i=0; i<k; i++) //поиск необходимых авторов
+     if (book[i].num_book>minpage)
+     {
+         for(j=0; j<*kg && strcmp(book[i].pr.gorod, mautor[j]); j++);
+         if (j==*kg) //если отсутствует, запишем город в массив
+         strcpy(mautor[(*kg)++], book[i].pr.gorod);
+     }
+ }
+
+
+main()
+{
+    book_struct book[Kmax]; //Инициализируемм массив структур
+    int k, kg=0, i;   //Инициализируемм переменные
+    char mautor[Kmax][Lmax];  // Массив автров, книги которых имеют количество страниц, превышабщее заданное
+    input(book, &k); //ввод массива книг
+    output(book, k); //вывод массива книг на экран
+    search(book, mautor, k, &kg); //формирование массива городов
+    printf("Result:\n%d list of author:\n",kg);
+    for(i=0; i<kg; i++)
+    puts(mautor[i]);
+    return 0;
+}
